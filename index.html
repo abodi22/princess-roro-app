@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="For Princess Roro">
+    <title>For princess roro</title>
+    
+    <!-- iOS App Icons -->
+    <link rel="apple-touch-icon" href="kuromi.jpg">
+    <link rel="apple-touch-startup-image" href="kuromi.jpg">
+    
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="kuromi.jpg" alt="Kuromi" class="kuromi-logo">
+            <h1>Princess roro</h1>
+        </div>
+
+        <div class="sentiment-buttons">
+            <button class="sentiment-btn miss" data-message="وحشتني بوبو">
+                <i class="fas fa-heart-broken"></i>
+                وحشتني
+            </button>
+            <button class="sentiment-btn love" data-message="احبك بوبو">
+                <i class="fas fa-heart"></i>
+                احبك
+            </button>
+            <button class="sentiment-btn need" data-message="ابيك بوبو">
+                <i class="fas fa-star"></i>
+                ابيك
+            </button>
+            <button class="sentiment-btn hate" data-message="ماحبك بوبو">
+                <i class="fas fa-angry"></i>
+                ماحبك
+            </button>
+        </div>
+
+        <div id="notification" class="notification"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 
