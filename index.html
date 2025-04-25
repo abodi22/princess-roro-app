@@ -23,6 +23,55 @@
             <h1>Princess roro</h1>
         </div>
 
+        <div class="music-controls">
+            <button id="toggleMusic" class="music-btn">
+                <i class="fas fa-music"></i>
+            </button>
+            <audio id="bgMusic" loop>
+                <source src="song.mp3" type="audio/mpeg">
+            </audio>
+        </div>
+
+        <div class="mood-tracker">
+            <div class="mood-buttons">
+                <button class="mood-btn" data-mood="happy">
+                    <i class="fas fa-grin-stars"></i>
+                </button>
+                <button class="mood-btn" data-mood="love">
+                    <i class="fas fa-heart"></i>
+                </button>
+                <button class="mood-btn" data-mood="sad">
+                    <i class="fas fa-sad-tear"></i>
+                </button>
+                <button class="mood-btn" data-mood="angry">
+                    <i class="fas fa-angry"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="love-counter">
+            <div class="counter-number" id="daysCounter">0</div>
+            <div class="counter-text">messages sent today</div>
+            <div class="counter-details">
+                <div class="counter-item">
+                    <i class="fas fa-heart-broken"></i>
+                    <span id="missCounter">0</span>
+                </div>
+                <div class="counter-item">
+                    <i class="fas fa-heart"></i>
+                    <span id="loveCounter">0</span>
+                </div>
+                <div class="counter-item">
+                    <i class="fas fa-star"></i>
+                    <span id="needCounter">0</span>
+                </div>
+                <div class="counter-item">
+                    <i class="fas fa-angry"></i>
+                    <span id="hateCounter">0</span>
+                </div>
+            </div>
+        </div>
+
         <div class="sentiment-buttons">
             <button class="sentiment-btn miss" data-message="وحشتني بوبو">
                 <i class="fas fa-heart-broken"></i>
@@ -39,6 +88,13 @@
             <button class="sentiment-btn hate" data-message="ماحبك بوبو">
                 <i class="fas fa-angry"></i>
                 ماحبك
+            </button>
+        </div>
+
+        <div class="custom-message">
+            <input type="text" id="customMessage" placeholder="Type your message..." class="custom-input">
+            <button id="sendCustom" class="custom-send-btn">
+                <i class="fas fa-paper-plane"></i>
             </button>
         </div>
 
