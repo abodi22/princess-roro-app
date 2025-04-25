@@ -44,7 +44,7 @@ body {
 
 .header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 
 .kuromi-logo {
@@ -62,10 +62,125 @@ h1 {
     margin-bottom: 1rem;
 }
 
+.music-controls {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.music-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 20px;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.music-btn:active {
+    transform: scale(0.95);
+    background-color: var(--button-hover);
+}
+
+.music-btn.playing {
+    animation: rotate 3s linear infinite;
+}
+
+.mood-tracker {
+    background: white;
+    border-radius: 15px;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mood-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.mood-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 20px;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mood-btn i {
+    font-size: 1.2rem;
+}
+
+.mood-btn:active {
+    transform: scale(0.95);
+    background-color: var(--button-hover);
+}
+
+.love-counter {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #ff69b4, #ff1493);
+    border-radius: 15px;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    animation: pulse 2s infinite;
+}
+
+.counter-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.counter-text {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 1rem;
+}
+
+.counter-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.counter-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.counter-item i {
+    font-size: 1.2rem;
+}
+
 .sentiment-buttons {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .sentiment-btn {
@@ -93,6 +208,42 @@ h1 {
 
 .sentiment-btn:active {
     transform: scale(0.98);
+    background-color: var(--button-hover);
+}
+
+.custom-message {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.custom-input {
+    flex: 1;
+    padding: 1rem;
+    border: 2px solid var(--primary-color);
+    border-radius: 15px;
+    font-size: 1rem;
+    outline: none;
+    direction: rtl;
+}
+
+.custom-send-btn {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 25px;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.custom-send-btn:active {
+    transform: scale(0.95);
     background-color: var(--button-hover);
 }
 
@@ -127,6 +278,17 @@ h1 {
     0% { transform: scale(1); }
     50% { transform: scale(1.1); }
     100% { transform: scale(1); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 .sentiment-btn.love i {
