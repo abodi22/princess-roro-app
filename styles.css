@@ -551,44 +551,22 @@ body.dark-mode .loading-text {
     color: var(--primary-color);
 }
 
-/* Enhanced Button Animations */
+/* Button Styles */
 .sentiment-btn, .music-btn, .mood-btn, .custom-send-btn, .dark-mode-toggle {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
+    transition: all 0.2s ease;
 }
 
 .sentiment-btn:active, .music-btn:active, .mood-btn:active, .custom-send-btn:active, .dark-mode-toggle:active {
-    transform: scale(0.95) translateY(2px);
+    transform: scale(0.95);
+    background-color: var(--button-hover);
 }
 
-.sentiment-btn::after, .music-btn::after, .mood-btn::after, .custom-send-btn::after, .dark-mode-toggle::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 5px;
-    height: 5px;
-    background: rgba(255, 255, 255, 0.5);
-    opacity: 0;
-    border-radius: 100%;
-    transform: scale(1, 1) translate(-50%, -50%);
-    transform-origin: 50% 50%;
-}
-
-.sentiment-btn:active::after, .music-btn:active::after, .mood-btn:active::after, .custom-send-btn:active::after, .dark-mode-toggle:active::after {
-    animation: ripple 0.6s ease-out;
-}
-
-@keyframes ripple {
-    0% {
-        transform: scale(0, 0);
-        opacity: 0.5;
-    }
-    100% {
-        transform: scale(20, 20);
-        opacity: 0;
-    }
+/* Remove all other button animations */
+.sentiment-btn:hover,
+.sentiment-btn.love:hover,
+.sentiment-btn.need:hover,
+.sentiment-btn.hate:hover {
+    animation: none;
 }
 
 /* Theme Switcher */
