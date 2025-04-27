@@ -1,0 +1,39 @@
+{
+    "widgets": [
+        {
+            "name": "Message Counter",
+            "description": "Shows total messages sent",
+            "size": "small",
+            "type": "counter",
+            "icon": "message",
+            "data": "messageCount"
+        },
+        {
+            "name": "Mood Tracker",
+            "description": "Shows current mood",
+            "size": "small",
+            "type": "mood",
+            "icon": "mood",
+            "data": "currentMood"
+        },
+        {
+            "name": "Last Message",
+            "description": "Shows last message sent",
+            "size": "medium",
+            "type": "message",
+            "icon": "chat",
+            "data": "lastMessage"
+        },
+        {
+            "name": "Quick Messages",
+            "description": "Quick access to common messages",
+            "size": "large",
+            "type": "quick-messages",
+            "icon": "quick-message",
+            "data": "quickMessages"
+        }
+    ],
+    "updateInterval": 30,
+    "supportedPlatforms": ["ios"],
+    "minimumVersion": "14.0"
+} 
