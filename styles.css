@@ -4,6 +4,7 @@
     --background-color: #fff0f5;
     --button-hover: #ff1493;
     --text-color: #333;
+    --primary-color-rgb: 255, 105, 180;
 }
 
 * {
@@ -291,4 +292,737 @@ h1 {
 }
 
 /* iPhone X and newer safe area insets */
-/* Removed the @supports block as padding is applied directly */ 
+/* Removed the @supports block as padding is applied directly */
+
+/* Loading States and Transitions */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+    position: relative;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--primary-color);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spinner 0.6s linear infinite;
+}
+
+@keyframes spinner {
+    to { transform: rotate(360deg); }
+}
+
+/* Focus States for Accessibility */
+:focus-visible {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.custom-input:focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.2);
+}
+
+.sentiment-btn:focus-visible,
+.music-btn:focus-visible,
+.mood-btn:focus-visible,
+.custom-send-btn:focus-visible {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Media Queries for Better Responsiveness */
+@media (min-width: 768px) {
+    .container {
+        max-width: 700px;
+    }
+    
+    .sentiment-buttons {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: 900px;
+    }
+}
+
+/* Dark Mode Toggle Button */
+.dark-mode-toggle {
+    position: fixed;
+    top: max(15px, env(safe-area-inset-top, 15px));
+    left: 15px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 20px;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.dark-mode-toggle:active {
+    transform: scale(0.95);
+    background-color: var(--button-hover);
+}
+
+.dark-mode-toggle:focus-visible {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+    --background-color: #1a1a1a;
+    --text-color: #ffffff;
+}
+
+body.dark-mode .container {
+    background: #2d2d2d;
+}
+
+body.dark-mode .custom-input {
+    background-color: #333;
+    color: white;
+}
+
+body.dark-mode .notification.success {
+    background-color: #004d00;
+    color: #90EE90;
+}
+
+body.dark-mode .notification.error {
+    background-color: #8B0000;
+    color: #FFB6C1;
+}
+
+body.dark-mode .theme-menu {
+    background: #2d2d2d;
+    color: white;
+}
+
+body.dark-mode .theme-option:hover {
+    background-color: #3d3d3d;
+}
+
+/* Theme Colors with Dark Mode Support */
+[data-theme="pink"] {
+    --primary-color: #ff69b4;
+    --secondary-color: #ff1493;
+    --button-hover: #ff1493;
+}
+
+[data-theme="blue"] {
+    --primary-color: #4a90e2;
+    --secondary-color: #2c5282;
+    --button-hover: #2c5282;
+    --primary-color-rgb: 74, 144, 226;
+}
+
+[data-theme="purple"] {
+    --primary-color: #9b51e0;
+    --secondary-color: #6b46c1;
+    --button-hover: #6b46c1;
+    --primary-color-rgb: 155, 81, 224;
+}
+
+[data-theme="mint"] {
+    --primary-color: #48bb78;
+    --secondary-color: #2f855a;
+    --button-hover: #2f855a;
+    --primary-color-rgb: 72, 187, 120;
+}
+
+/* Light Mode Background Colors */
+[data-theme="pink"] {
+    --background-color: #fff0f5;
+    --text-color: #333;
+}
+
+[data-theme="blue"] {
+    --background-color: #ebf8ff;
+    --text-color: #2d3748;
+}
+
+[data-theme="purple"] {
+    --background-color: #faf5ff;
+    --text-color: #2d3748;
+}
+
+[data-theme="mint"] {
+    --background-color: #f0fff4;
+    --text-color: #2d3748;
+}
+
+/* Print Styles */
+@media print {
+    .music-controls,
+    .custom-message,
+    .sentiment-buttons {
+        display: none;
+    }
+
+    .container {
+        box-shadow: none;
+        padding: 0;
+    }
+
+    body {
+        background: none;
+        color: black;
+    }
+}
+
+/* Better Touch Feedback */
+@media (hover: hover) {
+    .sentiment-btn:hover,
+    .music-btn:hover,
+    .mood-btn:hover,
+    .custom-send-btn:hover {
+        transform: translateY(-2px);
+        background-color: var(--button-hover);
+    }
+}
+
+@media (hover: none) {
+    .sentiment-btn:hover,
+    .music-btn:hover,
+    .mood-btn:hover,
+    .custom-send-btn:hover {
+        transform: none;
+    }
+}
+
+/* Loading Screen */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--background-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.loading-logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+}
+
+.loading-text {
+    margin-top: 1rem;
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+/* Dark mode support for loading screen */
+body.dark-mode .loading-screen {
+    background-color: var(--background-color);
+}
+
+body.dark-mode .loading-text {
+    color: var(--primary-color);
+}
+
+/* Enhanced Button Animations */
+.sentiment-btn, .music-btn, .mood-btn, .custom-send-btn, .dark-mode-toggle {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.sentiment-btn:active, .music-btn:active, .mood-btn:active, .custom-send-btn:active, .dark-mode-toggle:active {
+    transform: scale(0.95) translateY(2px);
+}
+
+.sentiment-btn::after, .music-btn::after, .mood-btn::after, .custom-send-btn::after, .dark-mode-toggle::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%, -50%);
+    transform-origin: 50% 50%;
+}
+
+.sentiment-btn:active::after, .music-btn:active::after, .mood-btn:active::after, .custom-send-btn:active::after, .dark-mode-toggle:active::after {
+    animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(20, 20);
+        opacity: 0;
+    }
+}
+
+/* Theme Switcher */
+.theme-switcher {
+    position: fixed;
+    top: max(15px, env(safe-area-inset-top, 15px));
+    right: 65px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 20px;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.theme-switcher:active {
+    transform: scale(0.95);
+    background-color: var(--button-hover);
+}
+
+.theme-switcher:focus-visible {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Theme Menu */
+.theme-menu {
+    position: fixed;
+    top: max(65px, calc(env(safe-area-inset-top, 15px) + 50px));
+    right: 15px;
+    background: white;
+    border-radius: 15px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: none;
+    z-index: 999;
+}
+
+.theme-menu.active {
+    display: block;
+    animation: slideIn 0.3s ease-out;
+}
+
+.theme-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.theme-option:hover {
+    background-color: var(--background-color);
+}
+
+.theme-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Enhanced Animations */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes glow {
+    0% { box-shadow: 0 0 5px var(--primary-color); }
+    50% { box-shadow: 0 0 20px var(--primary-color); }
+    100% { box-shadow: 0 0 5px var(--primary-color); }
+}
+
+/* Confetti Container */
+.confetti-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.confetti {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    opacity: 0.8;
+    animation: confetti-fall 3s linear forwards;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+@keyframes confetti-fall {
+    0% {
+        transform: translateY(-100vh) rotate(0deg) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(50vh) rotate(180deg) scale(1.2);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg) scale(1);
+        opacity: 0;
+    }
+}
+
+/* Add floating animation for emoji confetti */
+.confetti[style*="font-size"] {
+    animation: confetti-fall 3s linear forwards, float 2s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-10px) rotate(180deg);
+    }
+}
+
+/* Enhanced Button Animations */
+.sentiment-btn:hover {
+    animation: bounce 1s infinite;
+}
+
+.sentiment-btn.hate:hover {
+    animation: glow 2s infinite;
+}
+
+/* More Theme Colors */
+[data-theme="cherry"] {
+    --primary-color: #e91e63;
+    --secondary-color: #c2185b;
+    --background-color: #fce4ec;
+    --button-hover: #c2185b;
+    --text-color: #2d3748;
+    --primary-color-rgb: 233, 30, 99;
+}
+
+[data-theme="lavender"] {
+    --primary-color: #9c27b0;
+    --secondary-color: #7b1fa2;
+    --background-color: #f3e5f5;
+    --button-hover: #7b1fa2;
+    --text-color: #2d3748;
+    --primary-color-rgb: 156, 39, 176;
+}
+
+[data-theme="peach"] {
+    --primary-color: #ff9800;
+    --secondary-color: #f57c00;
+    --background-color: #fff3e0;
+    --button-hover: #f57c00;
+    --text-color: #2d3748;
+    --primary-color-rgb: 255, 152, 0;
+}
+
+[data-theme="ocean"] {
+    --primary-color: #00bcd4;
+    --secondary-color: #0097a7;
+    --background-color: #e0f7fa;
+    --button-hover: #0097a7;
+    --text-color: #2d3748;
+    --primary-color-rgb: 0, 188, 212;
+}
+
+/* Seasonal Themes */
+[data-theme="spring"] {
+    --primary-color: #4caf50;
+    --secondary-color: #388e3c;
+    --background-color: #e8f5e9;
+    --button-hover: #388e3c;
+    --text-color: #2d3748;
+    --primary-color-rgb: 76, 175, 80;
+}
+
+[data-theme="summer"] {
+    --primary-color: #ffc107;
+    --secondary-color: #ffa000;
+    --background-color: #fff8e1;
+    --button-hover: #ffa000;
+    --text-color: #2d3748;
+    --primary-color-rgb: 255, 193, 7;
+}
+
+[data-theme="autumn"] {
+    --primary-color: #795548;
+    --secondary-color: #5d4037;
+    --background-color: #efebe9;
+    --button-hover: #5d4037;
+    --text-color: #2d3748;
+    --primary-color-rgb: 121, 85, 72;
+}
+
+[data-theme="winter"] {
+    --primary-color: #90caf9;
+    --secondary-color: #42a5f5;
+    --background-color: #e3f2fd;
+    --button-hover: #42a5f5;
+    --text-color: #2d3748;
+    --primary-color-rgb: 144, 202, 249;
+}
+
+/* Custom Theme Creator */
+.theme-creator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    padding: 1rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: none;
+    z-index: 1000;
+}
+
+.theme-creator.active {
+    display: block;
+    animation: slideIn 0.3s ease-out;
+}
+
+.theme-creator input[type="color"] {
+    width: 100%;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.theme-creator button {
+    width: 100%;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.theme-creator button:hover {
+    background-color: var(--button-hover);
+}
+
+/* Widget Preview */
+.widget-preview {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    z-index: 1000;
+}
+
+.widget-card {
+    background: white;
+    border-radius: 20px;
+    padding: 1.2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    border: 2px solid var(--primary-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.widget-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary-color) 0%, transparent 100%);
+    opacity: 0.1;
+    z-index: 0;
+}
+
+.widget-card h3 {
+    color: var(--primary-color);
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+    font-weight: 600;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.widget-card h3::before {
+    content: '🎀';
+    font-size: 1.2rem;
+}
+
+.widget-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    position: relative;
+}
+
+.widget-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    animation: pulse 2s infinite;
+}
+
+.widget-label {
+    color: var(--text-color);
+    opacity: 0.9;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.widget-mood {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 1.4rem;
+    padding: 0.5rem 1rem;
+    background: rgba(var(--primary-color-rgb), 0.1);
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.widget-mood:hover {
+    transform: scale(1.05);
+    background: rgba(var(--primary-color-rgb), 0.2);
+}
+
+.widget-mood i {
+    color: var(--primary-color);
+    animation: bounce 1s infinite;
+}
+
+.widget-message {
+    font-size: 1.2rem;
+    color: var(--text-color);
+    text-align: center;
+    padding: 0.8rem;
+    background: rgba(var(--primary-color-rgb), 0.1);
+    border-radius: 15px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.widget-message:hover {
+    transform: scale(1.02);
+    background: rgba(var(--primary-color-rgb), 0.15);
+}
+
+.widget-time {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    opacity: 0.7;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.widget-time::before {
+    content: '🕒';
+    font-size: 1rem;
+}
+
+/* Dark mode support for widgets */
+body.dark-mode .widget-card {
+    background: #2d2d2d;
+    border-color: var(--primary-color);
+}
+
+body.dark-mode .widget-card::before {
+    opacity: 0.2;
+}
+
+body.dark-mode .widget-card h3 {
+    color: var(--primary-color);
+}
+
+body.dark-mode .widget-number,
+body.dark-mode .widget-mood i {
+    color: var(--primary-color);
+}
+
+body.dark-mode .widget-label,
+body.dark-mode .widget-message,
+body.dark-mode .widget-time {
+    color: white;
+}
+
+body.dark-mode .widget-mood,
+body.dark-mode .widget-message {
+    background: rgba(var(--primary-color-rgb), 0.2);
+} 
