@@ -74,19 +74,33 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial counter update
     updateCounterDisplay();
     
-    // Handle sentiment button clicks
+    // Quick Send Mode
+    const quickSendToggle = document.getElementById('quickSendToggle');
+    let isQuickSendMode = false;
+
+    quickSendToggle.addEventListener('click', () => {
+        isQuickSendMode = !isQuickSendMode;
+        document.body.classList.toggle('quick-send-mode');
+        quickSendToggle.classList.toggle('active');
+        
+        if (isQuickSendMode) {
+            quickSendToggle.innerHTML = '<i class="fas fa-bolt"></i> Quick Send Mode: ON';
+            showNotification('Quick Send Mode: ON - Press buttons rapidly!', 'success');
+        } else {
+            quickSendToggle.innerHTML = '<i class="fas fa-bolt"></i> Quick Send Mode: OFF';
+            showNotification('Quick Send Mode: OFF', 'info');
+        }
+    });
+
+    // Modify sentiment button click handler for quick send mode
     sentimentButtons.forEach(button => {
         button.addEventListener('click', async () => {
-            console.log('Button clicked:', button.classList[1]); // Debug log
-            
             const message = button.dataset.message;
             const buttonType = button.classList[1]; // miss, love, need, or hate
             
             // Increment counter
             counters[buttonType]++;
             localStorage.setItem('buttonCounters', JSON.stringify(counters));
-            
-            // Update display immediately
             updateCounterDisplay();
 
             try {
@@ -96,7 +110,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (response.ok) {
                     playMessageSound(); // Play sound on successful send
-                    showNotification('Message sent successfully!', 'success');
+                    if (!isQuickSendMode) {
+                        showNotification('Message sent successfully!', 'success');
+                    }
                 } else {
                     throw new Error(response.description || 'Failed to send message');
                 }
