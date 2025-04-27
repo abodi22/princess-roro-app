@@ -4,6 +4,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const BOT_TOKEN = '7709367373:AAE9dNtr-u23L0WwKLXXC4VSYPccu6XyiQg';
     const CHAT_ID = '1162147507';  // Your chat ID
     
+    // Create message sent sound
+    const messageSound = new Audio('button.mp3');
+    messageSound.volume = 0.15; // Lower volume for message sound
+    
+    // Debounce for message sound
+    let lastMessageSound = 0;
+    function playMessageSound() {
+        const now = Date.now();
+        if (now - lastMessageSound > 200) { // 200ms debounce
+            messageSound.currentTime = 0;
+            messageSound.play().catch(() => {});
+            lastMessageSound = now;
+        }
+    }
+
     // Initialize counters from localStorage
     let counters = JSON.parse(localStorage.getItem('buttonCounters')) || {
         miss: 0,
@@ -30,17 +45,48 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Update counter display
+    function updateCounterDisplay() {
+        // Update total counter
+        const totalClicks = counters.miss + counters.love + counters.need + counters.hate;
+        const daysCounter = document.getElementById('daysCounter');
+        const missCounter = document.getElementById('missCounter');
+        const loveCounter = document.getElementById('loveCounter');
+        const needCounter = document.getElementById('needCounter');
+        const hateCounter = document.getElementById('hateCounter');
+
+        if (daysCounter) daysCounter.textContent = totalClicks;
+        if (missCounter) missCounter.textContent = counters.miss;
+        if (loveCounter) loveCounter.textContent = counters.love;
+        if (needCounter) needCounter.textContent = counters.need;
+        if (hateCounter) hateCounter.textContent = counters.hate;
+
+        // Check for milestones and trigger confetti
+        const milestones = [10, 25, 50, 100, 110, 200, 500, 1000];
+        if (milestones.includes(totalClicks)) {
+            // Check if confetti function exists before calling it
+            if (typeof window.createConfetti === 'function') {
+                window.createConfetti();
+            }
+            showNotification(`Congratulations! You've sent ${totalClicks} messages! 🎉`, 'success');
+        }
+    }
+
+    // Initial counter update
     updateCounterDisplay();
     
     // Handle sentiment button clicks
     sentimentButtons.forEach(button => {
         button.addEventListener('click', async () => {
+            console.log('Button clicked:', button.classList[1]); // Debug log
+            
             const message = button.dataset.message;
             const buttonType = button.classList[1]; // miss, love, need, or hate
             
             // Increment counter
             counters[buttonType]++;
             localStorage.setItem('buttonCounters', JSON.stringify(counters));
+            
+            // Update display immediately
             updateCounterDisplay();
 
             try {
@@ -49,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('Telegram Response:', response);
                 
                 if (response.ok) {
+                    playMessageSound(); // Play sound on successful send
                     showNotification('Message sent successfully!', 'success');
                 } else {
                     throw new Error(response.description || 'Failed to send message');
@@ -64,49 +111,73 @@ document.addEventListener('DOMContentLoaded', () => {
     const customInput = document.getElementById('customMessage');
     const sendCustomBtn = document.getElementById('sendCustom');
 
-    sendCustomBtn.addEventListener('click', async () => {
-        const message = customInput.value.trim();
-        if (!message) {
-            showNotification('Please type a message first!', 'error');
-            return;
-        }
-
-        try {
-            const response = await sendTelegramMessage(message);
-            if (response.ok) {
-                showNotification('Message sent successfully!', 'success');
-                customInput.value = ''; // Clear input after sending
-            } else {
-                throw new Error(response.description || 'Failed to send message');
+    if (sendCustomBtn) {
+        sendCustomBtn.addEventListener('click', async () => {
+            const message = customInput.value.trim();
+            if (!message) {
+                showNotification('Please type a message first!', 'error');
+                return;
             }
-        } catch (error) {
-            console.error('Error:', error);
-            showNotification(error.message || 'Failed to send message. Please try again.', 'error');
-        }
-    });
+
+            try {
+                const response = await sendTelegramMessage(message);
+                if (response.ok) {
+                    playMessageSound(); // Play sound on successful send
+                    showNotification('Message sent successfully!', 'success');
+                    customInput.value = ''; // Clear input after sending
+                } else {
+                    throw new Error(response.description || 'Failed to send message');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification(error.message || 'Failed to send message. Please try again.', 'error');
+            }
+        });
+    }
 
     // Also send on Enter key
-    customInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            sendCustomBtn.click();
-        }
-    });
+    if (customInput) {
+        customInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendCustomBtn.click();
+            }
+        });
+    }
 
     // Handle background music
     const bgMusic = document.getElementById('bgMusic');
     const toggleMusicBtn = document.getElementById('toggleMusic');
-    let isMusicPlaying = false;
-
-    toggleMusicBtn.addEventListener('click', () => {
-        if (isMusicPlaying) {
-            bgMusic.pause();
-            toggleMusicBtn.classList.remove('playing');
-        } else {
-            bgMusic.play();
-            toggleMusicBtn.classList.add('playing');
+    
+    // Try to play music automatically
+    function playMusic() {
+        if (bgMusic) {
+            bgMusic.play().catch(() => {
+                // If autoplay fails, show a message
+                showNotification('Click the music button to play the song', 'info');
+            });
         }
-        isMusicPlaying = !isMusicPlaying;
-    });
+    }
+
+    // Play music when the page loads
+    playMusic();
+
+    // Toggle music play/pause
+    if (toggleMusicBtn && bgMusic) {
+        toggleMusicBtn.addEventListener('click', () => {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                toggleMusicBtn.classList.add('playing');
+            } else {
+                bgMusic.pause();
+                toggleMusicBtn.classList.remove('playing');
+            }
+        });
+
+        // Update button state when music ends
+        bgMusic.addEventListener('ended', () => {
+            toggleMusicBtn.classList.remove('playing');
+        });
+    }
 
     // Handle mood tracking
     const moodButtons = document.querySelectorAll('.mood-btn');
@@ -170,19 +241,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Function to update counter display
-    function updateCounterDisplay() {
-        // Update total counter
-        const totalClicks = counters.miss + counters.love + counters.need + counters.hate;
-        document.getElementById('daysCounter').textContent = totalClicks;
-
-        // Update individual counters
-        document.getElementById('missCounter').textContent = counters.miss;
-        document.getElementById('loveCounter').textContent = counters.love;
-        document.getElementById('needCounter').textContent = counters.need;
-        document.getElementById('hateCounter').textContent = counters.hate;
-    }
-
     // Function to send Telegram message
     async function sendTelegramMessage(message) {
         const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -202,10 +260,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to show notifications
     function showNotification(message, type) {
+        if (!notification) return; // Guard against missing notification element
         notification.textContent = message;
         notification.className = `notification ${type}`;
+        notification.style.display = 'block';
         setTimeout(() => {
             notification.style.display = 'none';
         }, 3000);
     }
+
+    // Make showNotification available globally
+    window.showNotification = showNotification;
 }); 
