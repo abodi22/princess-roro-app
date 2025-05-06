@@ -8,6 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageSound = new Audio('button.mp3');
     messageSound.volume = 0.15; // Lower volume for message sound
     
+    // Create Hello Kitty sound effect
+    const kittySound = new Audio('kitty-sound.mp3');
+    kittySound.volume = 0.3; // Adjust volume for Hello Kitty sound
+    
     // Debounce for message sound
     let lastMessageSound = 0;
     function playMessageSound() {
@@ -17,6 +21,12 @@ document.addEventListener('DOMContentLoaded', () => {
             messageSound.play().catch(() => {});
             lastMessageSound = now;
         }
+    }
+
+    // Play Hello Kitty sound
+    function playKittySound() {
+        kittySound.currentTime = 0;
+        kittySound.play().catch(() => {});
     }
 
     // Initialize counters from localStorage
@@ -92,34 +102,83 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Modify sentiment button click handler for quick send mode
+    // Message Queue System
+    const messageQueue = [];
+    let isProcessingQueue = false;
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY = 1000; // 1 second
+
+    async function processMessageQueue() {
+        if (isProcessingQueue || messageQueue.length === 0) return;
+        
+        isProcessingQueue = true;
+        const { message, button, retryCount = 0 } = messageQueue[0];
+        
+        try {
+            // Add loading state to button
+            if (button) {
+                button.classList.add('loading');
+                button.disabled = true;
+            }
+
+            const response = await sendTelegramMessage(message);
+            
+            if (response.ok) {
+                playMessageSound();
+                if (!isQuickSendMode) {
+                    showNotification('Message sent successfully!', 'success');
+                }
+                messageQueue.shift(); // Remove sent message from queue
+            } else {
+                throw new Error(response.description || 'Failed to send message');
+            }
+        } catch (error) {
+            console.error('Error sending message:', error);
+            
+            if (retryCount < MAX_RETRIES) {
+                // Retry the message
+                messageQueue[0].retryCount = retryCount + 1;
+                setTimeout(() => {
+                    isProcessingQueue = false;
+                    processMessageQueue();
+                }, RETRY_DELAY);
+            } else {
+                // Max retries reached, show error and remove from queue
+                showNotification('Failed to send message after multiple attempts. Please try again.', 'error');
+                messageQueue.shift();
+            }
+        } finally {
+            // Remove loading state from button
+            if (button) {
+                button.classList.remove('loading');
+                button.disabled = false;
+            }
+            isProcessingQueue = false;
+            
+            // Process next message if any
+            if (messageQueue.length > 0) {
+                setTimeout(processMessageQueue, 100);
+            }
+        }
+    }
+
+    // Modify sentiment button click handler
     sentimentButtons.forEach(button => {
-        button.addEventListener('click', async () => {
+        button.addEventListener('click', () => {
             const message = button.dataset.message;
-            const buttonType = button.classList[1]; // miss, love, need, or hate
+            const buttonType = button.classList[1];
             
             // Increment counter
             counters[buttonType]++;
             localStorage.setItem('buttonCounters', JSON.stringify(counters));
             updateCounterDisplay();
 
-            try {
-                console.log('Sending message:', message);
-                const response = await sendTelegramMessage(message);
-                console.log('Telegram Response:', response);
-                
-                if (response.ok) {
-                    playMessageSound(); // Play sound on successful send
-                    if (!isQuickSendMode) {
-                        showNotification('Message sent successfully!', 'success');
-                    }
-                } else {
-                    throw new Error(response.description || 'Failed to send message');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showNotification(error.message || 'Failed to send message. Please try again.', 'error');
-            }
+            // Add message to queue
+            messageQueue.push({ message, button });
+            processMessageQueue();
+            
+            // Play Hello Kitty sound
+            playKittySound();
         });
     });
 
@@ -128,26 +187,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendCustomBtn = document.getElementById('sendCustom');
 
     if (sendCustomBtn) {
-        sendCustomBtn.addEventListener('click', async () => {
+        sendCustomBtn.addEventListener('click', () => {
             const message = customInput.value.trim();
             if (!message) {
                 showNotification('Please type a message first!', 'error');
                 return;
             }
 
-            try {
-                const response = await sendTelegramMessage(message);
-                if (response.ok) {
-                    playMessageSound(); // Play sound on successful send
-                    showNotification('Message sent successfully!', 'success');
-                    customInput.value = ''; // Clear input after sending
-                } else {
-                    throw new Error(response.description || 'Failed to send message');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showNotification(error.message || 'Failed to send message. Please try again.', 'error');
-            }
+            // Add message to queue
+            messageQueue.push({ message, button: sendCustomBtn });
+            processMessageQueue();
+            customInput.value = ''; // Clear input after adding to queue
+            
+            // Play Hello Kitty sound
+            playKittySound();
         });
     }
 
@@ -198,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle mood tracking
     const moodButtons = document.querySelectorAll('.mood-btn');
     moodButtons.forEach(button => {
-        button.addEventListener('click', async () => {
+        button.addEventListener('click', () => {
             const mood = button.dataset.mood;
             const moodIcon = button.querySelector('i').className;
             
@@ -227,22 +280,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             localStorage.setItem('moodHistory', JSON.stringify(moodHistory));
 
-            // Send mood update to Telegram
-            try {
-                const moodMessage = `Princess Roro is feeling ${moodText} ${getMoodEmoji(mood)}`;
-                console.log('Sending mood:', moodMessage);
-                const response = await sendTelegramMessage(moodMessage);
-                console.log('Mood Response:', response);
-                
-                if (response.ok) {
-                    showNotification(`Mood updated: ${moodText}`, 'success');
-                } else {
-                    throw new Error(response.description || 'Failed to send mood update');
-                }
-            } catch (error) {
-                console.error('Error sending mood:', error);
-                showNotification('Failed to send mood update. Please try again.', 'error');
-            }
+            // Add mood message to queue
+            const moodMessage = `Princess Roro is feeling ${moodText} ${getMoodEmoji(mood)}`;
+            messageQueue.push({ message: moodMessage, button });
+            processMessageQueue();
         });
     });
 
@@ -287,4 +328,89 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Make showNotification available globally
     window.showNotification = showNotification;
+
+    // Message Inbox System
+    const inboxMessages = document.getElementById('inboxMessages');
+    const refreshInbox = document.getElementById('refreshInbox');
+    let lastUpdateId = 0;
+
+    // Function to fetch new messages
+    async function fetchNewMessages() {
+        try {
+            const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=${lastUpdateId + 1}`);
+            const data = await response.json();
+            
+            if (data.ok && data.result.length > 0) {
+                data.result.forEach(update => {
+                    if (update.message && update.message.chat.id.toString() === CHAT_ID) {
+                        // Update lastUpdateId
+                        lastUpdateId = update.update_id;
+                        
+                        // Add message to inbox
+                        addMessageToInbox(update.message);
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching messages:', error);
+            showNotification('Failed to fetch new messages', 'error');
+        }
+    }
+
+    // Function to add message to inbox
+    function addMessageToInbox(message) {
+        const messageElement = document.createElement('div');
+        messageElement.className = 'message-item';
+        
+        const date = new Date(message.date * 1000);
+        const timeString = date.toLocaleTimeString();
+        
+        messageElement.innerHTML = `
+            <div class="message-content">
+                ${message.text}
+            </div>
+            <div class="message-footer">
+                <div class="message-time">
+                    <i class="fas fa-clock"></i>
+                    ${timeString}
+                </div>
+                <button class="reply-btn" data-message-id="${message.message_id}">
+                    <i class="fas fa-reply"></i>
+                </button>
+            </div>
+        `;
+        
+        // Add reply button functionality
+        const replyBtn = messageElement.querySelector('.reply-btn');
+        replyBtn.addEventListener('click', () => {
+            const customInput = document.getElementById('customMessage');
+            customInput.value = ''; // Clear the input
+            customInput.focus();
+            customInput.scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        inboxMessages.insertBefore(messageElement, inboxMessages.firstChild);
+        
+        // Play notification sound for new messages
+        playMessageSound();
+        
+        // Show notification
+        showNotification('New message from Roro!', 'success');
+    }
+
+    // Set up periodic message checking
+    setInterval(fetchNewMessages, 5000); // Check every 5 seconds
+
+    // Handle manual refresh
+    if (refreshInbox) {
+        refreshInbox.addEventListener('click', () => {
+            refreshInbox.classList.add('loading');
+            fetchNewMessages().finally(() => {
+                refreshInbox.classList.remove('loading');
+            });
+        });
+    }
+
+    // Initial message fetch
+    fetchNewMessages();
 }); 
